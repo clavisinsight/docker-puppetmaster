@@ -8,13 +8,14 @@ RUN dpkg -i /tmp/puppetlabs.deb
 RUN apt-get update
 RUN apt-get -y install puppetmaster-passenger puppet-dashboard puppetdb puppetdb-terminus redis-server supervisor openssh-server net-tools mysql-server
 RUN gem install --no-ri --no-rdoc hiera hiera-puppet redis hiera-redis hiera-redis-backend
-RUN echo "127.0.0.1 localhost puppet puppetdb puppetdb.local puppet.local" > /etc/hosts
+
 RUN mkdir /var/run/sshd
+ADD puppetmaster.apache_conf /etc/apache2/sites-available/puppetmaster
 ADD supervisor.conf /opt/supervisor.conf
 ADD auth.conf /etc/puppet/auth.conf
 ADD puppet.conf /etc/puppet/puppet.conf
 ADD puppetdb.conf /etc/puppet/puppetdb.conf
-RUN (sed -i 's/#host = localhost/host = 0.0.0.0/g' /etc/puppetdb/conf.d/jetty.ini)
+ADD jetty.ini /etc/puppetdb/conf.d/jetty.ini
 ADD routes.yaml /etc/puppet/routes.yaml
 ADD hiera.yaml /etc/hiera.yaml
 
