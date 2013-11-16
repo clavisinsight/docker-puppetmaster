@@ -4,24 +4,41 @@ Creates a Puppet Master running with Apache/Passenger, PuppetDB, Dashboard, and 
 
 Build
 
-* `docker build -t puppetmaster .`
-* `docker run puppetmaster`
+```
+docker build -t puppetmaster .
+```
 
-Note: It is easiest to run the container with the hostname of `puppet`.  For
-example, `docker run -h puppet -d puppetmaster`
+Example run:
 
-Note: The `sshkey` and `sshkey.pub` are just for example.  Replace with your own
-before using.  These are used to access the SSH daemon on the container.
+```
+CONTAINER_ID=$(docker run -h puppet -d puppetmaster)
+chmod 0600 sshkey
+PUPPET_SSHPORT=$(docker port $CONTAINER_ID 22)
+ssh -i sshkey -p $PUPPET_SSHPORT root@localhost
+```
 
-Note: For the PuppetDB SSL cert setup, you will need to SSH and run the following
-to create the keystore and certs:
+Note: 
+ The `sshkey` and `sshkey.pub` are just for example. 
+ Replace with your own before using. 
+ These are used to access the SSH daemon on the container.
 
-* `puppet agent -t`
-* `puppetdb-ssl-setup`
-* `supervisorctl restart puppetdb`
+ Once you generate new ssh keys, then you need to rebuild the container.
 
-Ports
+```
+ssh-keygen -f sshkey
+```
+
+Note: you can trigger the puppetmaster to run the puppet agent is...
+
+```
+puppet agent -t`
+```
+
+Ports:
+------
 
 * 22 (ssh)
-* 8140 (puppet)
-* 8080 (puppetdb)
+* 8140 (puppet - SSL)
+* 8080 (puppetdb - HTTP)
+* 8081 (puppetdb - HTTPS)
+* 3000 (dashboard - HTTP)
