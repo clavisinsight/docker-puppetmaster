@@ -1,26 +1,28 @@
 #!/bin/sh
-PUPPET_DASHBOARD_URL=${PUPPET_DASHBOARD_URL:-http://localhost:3000}
 
-cat << EOF > /etc/puppet/puppet.conf
-[main]
-  pluginsync = true
+# Turn off ipv6
+echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6  
+echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6  
+echo '1' > /proc/sys/net/ipv6/conf/all/disable_ipv6  
+echo '1' > /proc/sys/net/ipv6/conf/default/disable_ipv6
 
-[master]
-  allow_duplicate_certs = True
-  ssldir = /var/lib/puppet/ssl
-  node_name = facter
-  facts_terminus = yaml
-  modulepath = /opt/arcus/modules:/etc/puppet/modules
-  node_terminus = exec
-  external_nodes = /usr/bin/env PUPPET_DASHBOARD_URL=$PUPPET_DASHBOARD_URL /usr/share/puppet-dashboard/bin/external_node
-  data_binding_terminus = hiera
-  hiera_config = /etc/hiera.yaml
-  storeconfigs = true
-  storeconfigs_backend = puppetdb
-  reports = store, http, puppetdb
+# Force the hostname to be puppet
+hostname puppet
 
-[agent]
-  ssldir = /var/lib/puppet/ssl
-EOF
+# delete all the certs generated during the build.
+rm -rf /var/lib/puppet/ssl
 
+# Force the puppetmaster to generate some new certs
+puppet master --no-daemonize --verbose &
+sleep 5
+pkill puppet
+
+# Enable SSL for puppetdb
+puppetdb-ssl-setup
+supervisorctl restart puppetdb
+
+# Start all the services
 supervisord -c /opt/supervisor.conf -n
+
+# run puppet agent once on the container
+puppet agent -t
