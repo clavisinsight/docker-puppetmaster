@@ -18,6 +18,7 @@ ADD puppetdb.conf /etc/puppet/puppetdb.conf
 ADD jetty.ini /etc/puppetdb/conf.d/jetty.ini
 ADD routes.yaml /etc/puppet/routes.yaml
 ADD hiera.yaml /etc/hiera.yaml
+ADD autosign.conf /etc/puppet/autosign.conf
 
 RUN (start-stop-daemon --start -b --exec /usr/sbin/mysqld && sleep 5 ; echo "create database dashboard character set utf8;" | mysql -u root)
 RUN (start-stop-daemon --start -b --exec /usr/sbin/mysqld && sleep 5 ; echo "create user dashboard@'localhost' identified by '1q2w3e4r5t';" | mysql -u root)
