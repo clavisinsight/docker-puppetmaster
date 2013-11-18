@@ -9,6 +9,9 @@ echo '1' > /proc/sys/net/ipv6/conf/default/disable_ipv6
 # Force the hostname to be puppet
 hostname puppet
 
+# Slam the IP as a valid CERT name
+sed -i "s/dns_alt_names = puppet, localhost/&, $(facter ipaddress), $(facter fqdn)/" /etc/puppet/puppet.conf
+
 # delete all the certs generated during the build.
 rm -rf /var/lib/puppet/ssl
 
@@ -16,6 +19,10 @@ rm -rf /var/lib/puppet/ssl
 puppet master --no-daemonize --verbose &
 sleep 5
 pkill puppet
+
+# Move the certs around -- this was breaking with custom domains from DHCP servers
+cp /var/lib/puppet/ssl/certs/puppet*.pem /var/lib/puppet/ssl/certs/puppet.pem
+cp /var/lib/puppet/ssl/private_keys/puppet*.pem /var/lib/puppet/ssl/private_keys/puppet.pem
 
 # Enable SSL for puppetdb
 puppetdb-ssl-setup
