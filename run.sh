@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -x
 
 # Turn off ipv6
 echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6  
@@ -17,8 +17,9 @@ rm -rf /var/lib/puppet/ssl
 
 # Force the puppetmaster to generate some new certs
 puppet master --no-daemonize --verbose &
-sleep 5
-pkill puppet
+echo "Waiting for puppet master to make some certs..."
+sleep 20
+pkill -9 puppet
 
 # Move the certs around -- this was breaking with custom domains from DHCP servers
 cp /var/lib/puppet/ssl/certs/puppet*.pem /var/lib/puppet/ssl/certs/puppet.pem
