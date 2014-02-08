@@ -1,16 +1,41 @@
-#!/bin/sh
+#!/bin/bash -x
 
 # Turn off ipv6
-echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6  
-echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6  
-echo '1' > /proc/sys/net/ipv6/conf/all/disable_ipv6  
+echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6
+echo '1' > /proc/sys/net/ipv6/conf/lo/disable_ipv6
+echo '1' > /proc/sys/net/ipv6/conf/all/disable_ipv6
 echo '1' > /proc/sys/net/ipv6/conf/default/disable_ipv6
 
-# Force the hostname to be puppet
-hostname puppet
+# Check the hostname, it must be puppet for this to work
+if [ $(hostname) != "puppet" ];then
+  echo
+  echo
+  echo
+  echo "-----------------------------------------"
+  echo " YOU MUST SET THE HOSTNAME TO BE 'puppet'"
+  echo " docker run -h puppet -t puppetmaster    "
+  echo "-----------------------------------------"
+  echo
+  echo
+  echo
+  echo
+  exit 1
+fi
+
+IP_ADDRESS=$(facter ipaddress)
+FQDN=$(facter fqdn)
+
+if [[ "${IP_ADDRESS}" ]];then
+    IP_ADDRESS=", ${IP_ADDRESS}"
+fi
+
+
+if [[ "${FQDN}" ]];then
+    FQDN=", ${FQDN}"
+fi
 
 # Slam the IP as a valid CERT name
-sed -i "s/dns_alt_names = puppet, localhost/&, $(facter ipaddress), $(facter fqdn)/" /etc/puppet/puppet.conf
+sed -i "s/dns_alt_names = puppet, localhost/& ${IP_ADDRESS} ${FQDN}/" /etc/puppet/puppet.conf
 
 # delete all the certs generated during the build.
 rm -rf /var/lib/puppet/ssl
