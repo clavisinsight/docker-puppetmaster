@@ -8,6 +8,10 @@ RUN dpkg -i /tmp/puppetlabs.deb
 RUN apt-get update
 RUN apt-get -y install puppetmaster-passenger puppet-dashboard puppetdb puppetdb-terminus redis-server supervisor openssh-server net-tools mysql-server
 RUN gem install --no-ri --no-rdoc hiera hiera-puppet redis hiera-redis hiera-redis-backend
+RUN apt-get install python-dev python python-pip git uwsgi -y
+RUN git clone https://github.com/nedap/puppetboard \
+ && cd /puppetboard \
+ && pip install -r requirements.txt
 
 RUN mkdir /var/run/sshd
 ADD puppetmaster.apache_conf /etc/apache2/sites-available/puppetmaster
@@ -18,6 +22,8 @@ ADD puppetdb.conf /etc/puppet/puppetdb.conf
 ADD jetty.ini /etc/puppetdb/conf.d/jetty.ini
 ADD routes.yaml /etc/puppet/routes.yaml
 ADD hiera.yaml /etc/hiera.yaml
+ADD hiera.yaml /etc/puppet/hiera.yaml
+ADD hiera-common.yaml /etc/puppet/hiera/common.yaml
 ADD autosign.conf /etc/puppet/autosign.conf
 
 RUN (start-stop-daemon --start -b --exec /usr/sbin/mysqld && sleep 5 ; echo "create database dashboard character set utf8;" | mysql -u root)
@@ -34,9 +40,5 @@ ADD sshkey.pub /root/.ssh/authorized_keys
 RUN chown root:root /root/.ssh/authorized_keys
 ADD run.sh /usr/local/bin/run
 
-EXPOSE 22
-EXPOSE 3000
-EXPOSE 8080
-EXPOSE 8081
-EXPOSE 8140
+EXPOSE 22 3000 8080 8081 8140 9090
 CMD ["/usr/local/bin/run"]
