@@ -30,6 +30,10 @@ RUN (start-stop-daemon --start -b --exec /usr/sbin/mysqld && cd /usr/share/puppe
 RUN (sed -i 's/.*START.*/START=yes/g' /etc/default/puppet-dashboard)
 RUN (sed -i 's/.*START.*/START=yes/g' /etc/default/puppet-dashboard-workers)
 
+RUN mkdir -p /etc/puppet/environments/default
+RUN mkdir -p /etc/puppet/environments/git
+RUN cd /etc/puppet/environments/git && git --bare init
+
 RUN mkdir /root/.ssh
 # NOTE: change this key to your own
 ADD sshkey.pub /root/.ssh/authorized_keys

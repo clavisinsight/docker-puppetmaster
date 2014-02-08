@@ -1,0 +1,10 @@
+FROM ubuntu:12.04
+RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe multiverse" > /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install -y wget
+RUN wget -q http://apt.puppetlabs.com/puppetlabs-release-precise.deb -O /tmp/puppetlabs.deb
+RUN dpkg -i /tmp/puppetlabs.deb
+RUN apt-get update
+RUN apt-get -y install puppet
+
+CMD ["puppet agent --no-daemonize --server $PUPPETMASTER_PORT_8140_TCP_ADDR --verbose"]
