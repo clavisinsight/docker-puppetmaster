@@ -2,6 +2,29 @@
 
 Creates a Puppet Master running with Apache/Passenger, PuppetDB, Dashboard, and Redis (for Hiera).
 
+What is this ?
+--------------
+
+This is a self-contained puppetmaster used for testing and education.
+
+Whats inside ?
+--------------
+
+Everything is kept up-to-date during a build.
+The last time i refreshed mine, I got the following versions...
+
+* ubuntu 12.04 LTS
+* facter 1.7.4
+* hiera 1.3.1
+* puppet 3.4.2
+* puppetdb 1.6.2
+* puppet-dashboard 1.2.23
+* mysql-server 5.5.22
+
+
+How do i play use it ?
+----------------------
+
 Build
 
 ```
