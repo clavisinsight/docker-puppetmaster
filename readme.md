@@ -36,7 +36,7 @@ Example run:
 ```
 CONTAINER_ID=$(docker run -h puppet -P -d puppetmaster)
 chmod 0600 sshkey
-PUPPET_SSHPORT=$(docker port $CONTAINER_ID 22)
+PUPPET_SSHPORT=$(docker port $CONTAINER_ID 22 | cut -d: -f2)
 ssh -i sshkey -p $PUPPET_SSHPORT root@localhost
 ```
 
