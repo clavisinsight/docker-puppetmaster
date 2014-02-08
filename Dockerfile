@@ -36,8 +36,10 @@ RUN (sed -i 's/.*START.*/START=yes/g' /etc/default/puppet-dashboard)
 RUN (sed -i 's/.*START.*/START=yes/g' /etc/default/puppet-dashboard-workers)
 
 RUN mkdir -p /etc/puppet/environments/default
-RUN mkdir -p /etc/puppet/environments/git
-RUN cd /etc/puppet/environments/git && git --bare init
+RUN mkdir -p /var/puppet.git
+RUN cd /var/puppet.git && git --bare init
+ADD post-receive /var/puppet.git/hooks/post-receive
+RUN chmod a+x /var/puppet.git/hooks/post-receive
 
 RUN mkdir /root/.ssh
 # NOTE: change this key to your own

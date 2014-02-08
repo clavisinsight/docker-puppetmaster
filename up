@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/bash -x
+
+docker build -t puppetmaster .
 
 # Start the container
 CONTAINER_ID=$(docker run -P -h puppet -d puppetmaster)
@@ -24,6 +26,23 @@ sleep 20
 
 echo "You might want to run: "
 echo "$ puppet agent -t"
+
+echo "Adding your public keys"
+cat ~/.ssh/id_*.pub | ssh -i sshkey -o StrictHostKeyChecking=no -p $PUPPET_SSHPORT root@localhost '/bin/cat - >> ~/.ssh/authorized_keys'
+
+if [ ! -d puppet ];then
+    git clone ssh://root@localhost:$PUPPET_SSHPORT/var/puppet.git puppet
+fi
+if [ -d puppet/.git ];then
+    cd puppet
+    echo "changing up origin .. "
+    git remote remove origin
+    git remote add origin ssh://root@localhost:$PUPPET_SSHPORT/var/puppet.git
+    cd ..
+fi
+
+(cd puppet; git push )
+
 
 # connect to the machine.
 ssh -i sshkey -o StrictHostKeyChecking=no -p $PUPPET_SSHPORT root@localhost
