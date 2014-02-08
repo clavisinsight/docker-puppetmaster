@@ -1,0 +1,11 @@
+#!/bin/bash -x
+
+cd /etc/puppet/environments/
+if [ ! -d git/.git ];then
+    git clone /var/puppet.git git 2>&1 > /dev/null
+fi
+
+cd /etc/puppet/environments/git/
+git fetch --all 2>&1 > /dev/null
+git reset --hard 2>&1 > /dev/null
+git pull
