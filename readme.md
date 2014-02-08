@@ -21,6 +21,21 @@ The last time i refreshed mine, I got the following versions...
 * puppet-dashboard 1.2.23
 * mysql-server 5.5.22
 
+Using this to test your current puppet manifests and modules?
+-------------------------------------------------------------
+
+```
+git clone your-puppet-repo/modules-and-manifests.git puppet
+./up
+```
+
+How do i play use it ?
+----------------------
+
+```
+./up
+```
+
 
 How do i play use it ?
 ----------------------
