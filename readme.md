@@ -34,7 +34,7 @@ docker build -t puppetmaster .
 Example run:
 
 ```
-CONTAINER_ID=$(docker run -h puppet -d puppetmaster)
+CONTAINER_ID=$(docker run -h puppet -P -d puppetmaster)
 chmod 0600 sshkey
 PUPPET_SSHPORT=$(docker port $CONTAINER_ID 22)
 ssh -i sshkey -p $PUPPET_SSHPORT root@localhost
