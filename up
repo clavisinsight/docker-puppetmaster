@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Start the container
+CONTAINER_ID=$(docker run -P -h puppet -d puppetmaster)
+chmod 0600 sshkey
+sleep 10
+
+# Grab all the ports
+PUPPET_SSHPORT=$(docker port $CONTAINER_ID 22 | cut -d: -f2)
+PUPPET_PUPPETDBPORT=$(docker port $CONTAINER_ID 8080 | cut -d: -f2)
+PUPPET_PUPPETDBSPORT=$(docker port $CONTAINER_ID 8081 | cut -d: -f2)
+PUPPET_PUPPETDASHBOARDPORT=$(docker port $CONTAINER_ID 3000 | cut -d: -f2)
+
+# Show the user the ports
+echo "ssh"
+echo "# ssh -i sshkey -p $PUPPET_SSHPORT root@localhost"
+echo "puppetdb (http)"
+echo "# http://localhost:$PUPPET_PUPPETDBPORT/"
+echo "puppetdb (https)"
+echo "# https://localhost:$PUPPET_PUPPETDBSPORT/"
+echo "puppet-dashboard (http)"
+echo "# http://localhost:$PUPPET_PUPPETDASHBOARDPORT/"
+sleep 20
+
+echo "You might want to run: "
+echo "$ puppet agent -t"
+
+# connect to the machine.
+ssh -i sshkey -o StrictHostKeyChecking=no -p $PUPPET_SSHPORT root@localhost
