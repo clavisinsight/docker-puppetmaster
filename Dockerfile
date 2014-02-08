@@ -25,6 +25,7 @@ ADD hiera.yaml /etc/hiera.yaml
 ADD hiera.yaml /etc/puppet/hiera.yaml
 ADD hiera-common.yaml /etc/puppet/hiera/common.yaml
 ADD autosign.conf /etc/puppet/autosign.conf
+ADD puppetboard-default_settings.py /puppetboard/puppetboard/default_settings.py
 
 RUN (start-stop-daemon --start -b --exec /usr/sbin/mysqld && sleep 5 ; echo "create database dashboard character set utf8;" | mysql -u root)
 RUN (start-stop-daemon --start -b --exec /usr/sbin/mysqld && sleep 5 ; echo "create user dashboard@'localhost' identified by '1q2w3e4r5t';" | mysql -u root)
