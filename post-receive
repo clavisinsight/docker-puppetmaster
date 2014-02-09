@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 cd /etc/puppet/environments/
 if [ ! -d git/.git ];then
