@@ -35,13 +35,13 @@ if [ ! -d puppet ];then
 fi
 if [ -d puppet/.git ];then
     cd puppet
-    echo "changing up origin .. "
-    git remote remove origin
-    git remote add origin ssh://root@localhost:$PUPPET_SSHPORT/var/puppet.git
+    echo "changing up remote puppetmaster "
+    git remote remove puppetmaster 2>&1 > /dev/null
+    git remote add puppetmaster ssh://root@localhost:$PUPPET_SSHPORT/var/puppet.git
     cd ..
 fi
 
-(cd puppet; git push )
+(cd puppet; git push puppetmaster --all)
 
 
 # connect to the machine.
