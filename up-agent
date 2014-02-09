@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# find the name of the puppet master conatiner
+PUPPETMASTER_NAME=$(docker ps | awk '$2 ~ /puppetmaster:latest/ {print $NF}' | cut -d, -f1)
+
+if [ -z $PUPPETMASTER_NAME ];then
+   echo "Unable to find container tagged with puppetmaster"
+   exit 1
+fi
+
+# build the agent
+cat Dockerfile-puppetagent | docker build -t puppetagent -
+
+# Grab the hostname
+HOSTNAME=${1:-ubuntu}
+if [ ${#} -gt 0 ];then
+   shift
+fi
+
+echo "# You can try running this command when it all starts..."
+echo "puppet agent -t --server \$PUPPETMASTER_PORT_8140_TCP_ADDR --certname ${HOSTNAME} --environment git --debug --verbose"
+
+
+# Run the agent with the provided hostname & args
+docker run -i -t -h ${HOSTNAME} --link=${PUPPETMASTER_NAME}:puppetmaster puppetagent bash
