@@ -1,12 +1,14 @@
 FROM ubuntu:12.04
-MAINTAINER Arcus "http://arcus.io"
+# FORKED FROM Arcus "http://arcus.io"
+MAINTAINER "Artur Martins <artur.martins@clavisinsight.com>"
+ENV DEBIAN_FRONTEND noninteractive
 RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe multiverse" > /etc/apt/sources.list
 RUN apt-get update
-RUN apt-get install -y wget
+RUN apt-get install -y wget apt-utils aptitude dialog ruby rubygems 
 RUN wget -q http://apt.puppetlabs.com/puppetlabs-release-precise.deb -O /tmp/puppetlabs.deb
 RUN dpkg -i /tmp/puppetlabs.deb
-RUN apt-get update
-RUN apt-get -y install puppetmaster-passenger puppet-dashboard puppetdb puppetdb-terminus redis-server supervisor openssh-server net-tools mysql-server
+RUN aptitude update
+RUN aptitude -y install puppetmaster-passenger puppet-dashboard puppetdb puppetdb-terminus redis-server supervisor openssh-server net-tools mysql-server
 RUN gem install --no-ri --no-rdoc hiera hiera-puppet redis hiera-redis hiera-redis-backend
 RUN apt-get install python-dev python python-pip git uwsgi -y
 RUN git clone https://github.com/nedap/puppetboard \
